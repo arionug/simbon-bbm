@@ -445,6 +445,188 @@ a { text-decoration: none; color: inherit; }
   to { opacity: 0; transform: translateX(40px); }
 }
 
+/* ---------------- Halaman Pengaturan ---------------- */
+.settings-card {
+  margin-bottom: 24px;
+  padding: 24px 26px;
+}
+
+.settings-card-title {
+  font-size: 16.5px;
+  color: var(--biru-tua);
+  margin: 0 0 4px;
+}
+
+.settings-card-desc {
+  font-size: 13px;
+  color: var(--teks-muted);
+  margin: 0 0 18px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--abu-border);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.data-table th {
+  background: var(--abu-terang);
+  color: var(--teks-utama);
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--abu-border);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid #f1f3f6;
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+.data-table .row-empty td {
+  text-align: center;
+  color: var(--teks-muted);
+  padding: 18px;
+}
+
+.data-table input[type="text"],
+.data-table select {
+  width: 100%;
+  min-width: 140px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--abu-border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+}
+
+.data-table input[type="text"]:focus,
+.data-table select:focus {
+  outline: none;
+  border-color: var(--biru-tua);
+}
+
+.data-table .input-icon-group { min-width: 140px; }
+.data-table .input-icon-group .input-prefix { left: 10px; font-size: 13px; }
+.data-table .input-icon-group input.has-prefix { padding-left: 30px !important; }
+
+.col-aksi { white-space: nowrap; }
+
+.btn-icon {
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1.5px solid var(--abu-border);
+  background: #fff;
+  color: var(--teks-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 6px;
+}
+.btn-icon:last-child { margin-right: 0; }
+
+.btn-icon.btn-save {
+  color: var(--biru-tua);
+  border-color: var(--biru-tua);
+}
+.btn-icon.btn-save:hover { background: rgba(15, 45, 90, 0.06); }
+
+.btn-icon.btn-danger {
+  color: var(--merah);
+  border-color: #f3b9b3;
+}
+.btn-icon.btn-danger:hover { background: #fdecea; }
+
+.inline-add-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.inline-add-form input[type="text"],
+.inline-add-form select {
+  flex: 1 1 180px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--abu-border);
+  border-radius: 8px;
+  font-size: 13.5px;
+  background: #fff;
+}
+
+.inline-add-form input[type="text"]:focus,
+.inline-add-form select:focus {
+  outline: none;
+  border-color: var(--biru-tua);
+  box-shadow: 0 0 0 3px rgba(15, 45, 90, 0.12);
+}
+
+.btn-add {
+  flex: 0 0 auto;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--biru-tua), var(--biru-tua-gelap));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(15, 45, 90, 0.28); }
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--abu-terang);
+  border: 1px solid var(--abu-border);
+  color: var(--teks-utama);
+  padding: 7px 8px 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chip-empty {
+  color: var(--teks-muted);
+  font-size: 13px;
+}
+
+.chip-remove {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--merah);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chip-remove:hover { background: rgba(220, 38, 38, 0.2); }
+
 /* ---------------- Responsif ---------------- */
 @media (max-width: 720px) {
   .form-grid { grid-template-columns: 1fr; }
@@ -454,4 +636,8 @@ a { text-decoration: none; color: inherit; }
   .main-content { padding: 0 12px 40px; }
   .card { padding: 20px; }
   .nav-menu { padding: 0 10px; overflow-x: auto; }
+  .settings-card { padding: 18px; }
+  .inline-add-form input[type="text"],
+  .inline-add-form select,
+  .btn-add { flex: 1 1 100%; }
 }

@@ -25,17 +25,18 @@ WARNA_EMAS = colors.HexColor("#d4af37")
 # Pihak yang selalu menjadi sumber dana (teks tetap, tidak diinput dari form)
 TELAH_DITERIMA_DARI = "Kepala Kejaksaan Tinggi Jawa Tengah"
 
-# Urutan jenis BBM yang selalu ditampilkan di rincian "Guna Membayar"
-JENIS_BBM_URUTAN = ["Pertamax", "Dexlite", "Pertamina Dex"]
 
-
-def generate_nota_pdf(nota: dict) -> str:
+def generate_nota_pdf(nota: dict, jenis_bbm_urutan=None) -> str:
     """
     nota: dict berisi field:
       id, tanggal_nota, nomor_polisi, jenis_bbm, jumlah_liter,
       uang, terbilang, mengetahui, waktu_input
+    jenis_bbm_urutan: daftar jenis BBM yang ditampilkan pada rincian
+      "Guna Membayar" (mengikuti data harga BBM terkini di menu Pengaturan).
+      Jika tidak diberikan, hanya jenis BBM pada nota ini yang ditampilkan.
     Mengembalikan nama file PDF yang dihasilkan (relatif terhadap generated_pdf/).
     """
+    jenis_bbm_urutan = jenis_bbm_urutan or [nota["jenis_bbm"]]
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     filename = f"nota_{nota['id']:06d}.pdf"
     filepath = os.path.join(OUTPUT_DIR, filename)
@@ -110,7 +111,7 @@ def generate_nota_pdf(nota: dict) -> str:
 
     # ---------- Rincian Guna Membayar (per jenis BBM) ----------
     fuel_rows = []
-    for jenis in JENIS_BBM_URUTAN:
+    for jenis in jenis_bbm_urutan:
         if jenis == nota["jenis_bbm"]:
             nilai_liter = f"{format_liter(nota['jumlah_liter'])} Liter"
         else:

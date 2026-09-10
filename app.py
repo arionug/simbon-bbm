@@ -36,9 +36,6 @@ SESSION_TIMEOUT = timedelta(minutes=30)
 VALID_USERNAME = "admin"
 VALID_PASSWORD = "kejati"
 
-JENIS_BBM_LIST = ["Pertamax", "Dexlite", "Pertamina Dex"]
-MENGETAHUI_LIST = ["ANDRI", "BOWO", "WANDI", "AGUS", "SATRIA", "INDRA", "FAHRI"]
-
 
 # --------------------------------------------------------------------------
 # Helper
@@ -116,17 +113,32 @@ def logout():
 @login_required
 def dashboard():
     vehicles = db.get_vehicles()
+    bbm_prices = db.get_bbm_prices()
+    drivers = db.get_drivers()
     return render_template(
         "dashboard.html",
         app_name=APP_NAME,
         username=session.get("username"),
         vehicles=vehicles,
-        jenis_bbm_list=JENIS_BBM_LIST,
-        mengetahui_list=MENGETAHUI_LIST,
+        jenis_bbm_list=[p["jenis_bbm"] for p in bbm_prices],
+        bbm_prices={p["jenis_bbm"]: p["harga"] for p in bbm_prices},
+        mengetahui_list=[d["nama"] for d in drivers],
     )
 
 
-@app.route("/menu2")  # Menu Dalam Pengembangan -> diarahkan ke Bon BBM
+@app.route("/settings")
+@login_required
+def settings():
+    return render_template(
+        "settings.html",
+        app_name=APP_NAME,
+        username=session.get("username"),
+        vehicles=db.get_vehicles(),
+        drivers=db.get_drivers(),
+        bbm_prices=db.get_bbm_prices(),
+    )
+
+
 @app.route("/menu3")  # Menu Dalam Pengembangan -> diarahkan ke Bon BBM
 @login_required
 def menu_dalam_pengembangan():
@@ -147,9 +159,82 @@ def api_get_vehicles():
 def api_add_vehicle():
     payload = request.get_json(silent=True) or {}
     nomor_polisi = payload.get("nomor_polisi", "")
-    ok, message = db.add_vehicle(nomor_polisi)
+    driver = payload.get("driver")
+    jenis_bbm = payload.get("jenis_bbm")
+    ok, message = db.add_vehicle(nomor_polisi, driver, jenis_bbm)
     status = 200 if ok else 400
     return jsonify({"success": ok, "message": message}), status
+
+
+@app.route("/api/vehicles/<int:vehicle_id>", methods=["PUT"])
+@login_required
+def api_update_vehicle(vehicle_id):
+    payload = request.get_json(silent=True) or {}
+    ok, message = db.update_vehicle(
+        vehicle_id,
+        nomor_polisi=payload.get("nomor_polisi"),
+        driver=payload.get("driver"),
+        jenis_bbm=payload.get("jenis_bbm"),
+    )
+    status = 200 if ok else 400
+    return jsonify({"success": ok, "message": message}), status
+
+
+@app.route("/api/vehicles/<int:vehicle_id>", methods=["DELETE"])
+@login_required
+def api_delete_vehicle(vehicle_id):
+    db.delete_vehicle(vehicle_id)
+    return jsonify({"success": True, "message": "Kendaraan berhasil dihapus."})
+
+
+# --------------------------------------------------------------------------
+# API - Driver
+# --------------------------------------------------------------------------
+@app.route("/api/drivers", methods=["GET"])
+@login_required
+def api_get_drivers():
+    return jsonify({"success": True, "data": db.get_drivers()})
+
+
+@app.route("/api/drivers", methods=["POST"])
+@login_required
+def api_add_driver():
+    payload = request.get_json(silent=True) or {}
+    ok, message = db.add_driver(payload.get("nama", ""))
+    status = 200 if ok else 400
+    return jsonify({"success": ok, "message": message}), status
+
+
+@app.route("/api/drivers/<int:driver_id>", methods=["DELETE"])
+@login_required
+def api_delete_driver(driver_id):
+    db.delete_driver(driver_id)
+    return jsonify({"success": True, "message": "Driver berhasil dihapus."})
+
+
+# --------------------------------------------------------------------------
+# API - Harga BBM
+# --------------------------------------------------------------------------
+@app.route("/api/bbm-prices", methods=["GET"])
+@login_required
+def api_get_bbm_prices():
+    return jsonify({"success": True, "data": db.get_bbm_prices()})
+
+
+@app.route("/api/bbm-prices", methods=["POST"])
+@login_required
+def api_upsert_bbm_price():
+    payload = request.get_json(silent=True) or {}
+    ok, message = db.upsert_bbm_price(payload.get("jenis_bbm", ""), payload.get("harga"))
+    status = 200 if ok else 400
+    return jsonify({"success": ok, "message": message}), status
+
+
+@app.route("/api/bbm-prices/<int:price_id>", methods=["DELETE"])
+@login_required
+def api_delete_bbm_price(price_id):
+    db.delete_bbm_price(price_id)
+    return jsonify({"success": True, "message": "Jenis BBM berhasil dihapus."})
 
 
 # --------------------------------------------------------------------------
@@ -223,7 +308,8 @@ def api_generate_nota():
         tambah_data_excel(nota_data)
 
         # 3) Generate PDF
-        pdf_filename = generate_nota_pdf(nota_data)
+        jenis_bbm_urutan = [p["jenis_bbm"] for p in db.get_bbm_prices()]
+        pdf_filename = generate_nota_pdf(nota_data, jenis_bbm_urutan=jenis_bbm_urutan)
         db.update_pdf_file(new_id, pdf_filename)
 
     except Exception as exc:
