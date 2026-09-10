@@ -27,7 +27,7 @@
 
   <nav class="nav-menu">
     <a href="{{ url_for('dashboard') }}" class="active">Bon BBM</a>
-    <a href="{{ url_for('dashboard') }}">Menu Dalam Pengembangan</a>
+    <a href="{{ url_for('settings') }}">Pengaturan</a>
     <a href="{{ url_for('dashboard') }}">Menu Dalam Pengembangan</a>
   </nav>
 
@@ -126,6 +126,7 @@
 
   <script>
     window.VEHICLES_DATA = {{ vehicles | tojson }};
+    window.BBM_PRICES = {{ bbm_prices | tojson }};
   </script>
   <script src="{{ url_for('static', filename='js/clock.js') }}"></script>
   <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>

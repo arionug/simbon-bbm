@@ -22,10 +22,15 @@ function showToast(message, type = "info", duration = 3800) {
 // Dropdown searchable Nomor Polisi
 // ---------------------------------------------------------
 let vehicleList = (window.VEHICLES_DATA || []).map((v) => v.nomor_polisi);
+const vehicleMap = {};
+(window.VEHICLES_DATA || []).forEach((v) => { vehicleMap[v.nomor_polisi] = v; });
+const BBM_PRICES = window.BBM_PRICES || {};
 
 const inputPlat = document.getElementById("nomor_polisi_input");
 const hiddenPlat = document.getElementById("nomor_polisi");
 const optionsList = document.getElementById("plat-options");
+const selectJenisBbm = document.getElementById("jenis_bbm");
+const selectMengetahui = document.getElementById("mengetahui");
 
 function renderPlatOptions(filterText = "") {
   optionsList.innerHTML = "";
@@ -70,6 +75,27 @@ function selectPlat(plat) {
   hiddenPlat.value = plat;
   optionsList.classList.remove("open");
   clearFieldError("nomor_polisi");
+  autofillFromVehicle(plat);
+}
+
+// ---------------------------------------------------------
+// Autofill Jenis BBM & Driver berdasarkan Nomor Polisi
+// ---------------------------------------------------------
+function setSelectValueIfExists(selectEl, value) {
+  if (!value) return;
+  const hasOption = Array.from(selectEl.options).some((opt) => opt.value === value);
+  if (hasOption) {
+    selectEl.value = value;
+    clearFieldError(selectEl.id);
+  }
+}
+
+function autofillFromVehicle(plat) {
+  const vehicle = vehicleMap[plat];
+  if (!vehicle) return;
+  setSelectValueIfExists(selectJenisBbm, vehicle.jenis_bbm);
+  setSelectValueIfExists(selectMengetahui, vehicle.driver);
+  recalcFromPriceChange();
 }
 
 async function addNewVehicle(plat) {
@@ -114,20 +140,15 @@ const inputLiter = document.getElementById("jumlah_liter");
 const inputUang = document.getElementById("uang");
 const inputTerbilang = document.getElementById("terbilang");
 
-// Hanya izinkan angka & satu titik desimal pada Jumlah Liter
-inputLiter.addEventListener("input", () => {
-  let val = inputLiter.value.replace(/[^0-9.]/g, "");
-  const parts = val.split(".");
-  if (parts.length > 2) {
-    val = parts[0] + "." + parts.slice(1).join("");
-  }
-  inputLiter.value = val;
-  clearFieldError("jumlah_liter");
-});
+// Harga per liter dari jenis BBM yang sedang dipilih (0 jika belum diketahui)
+function getHarga() {
+  const harga = parseFloat(BBM_PRICES[selectJenisBbm.value]);
+  return isNaN(harga) || harga <= 0 ? 0 : harga;
+}
 
-// Format ribuan otomatis untuk Uang Sebanyak + generate terbilang otomatis
+// Format ribuan otomatis untuk Uang Sebanyak
 function formatRibuan(angka) {
-  const numOnly = angka.replace(/[^0-9]/g, "");
+  const numOnly = String(angka).replace(/[^0-9]/g, "");
   if (!numOnly) return "";
   return parseInt(numOnly, 10).toLocaleString("id-ID");
 }
@@ -136,12 +157,12 @@ function getRawUang() {
   return inputUang.value.replace(/[^0-9]/g, "");
 }
 
-let terbilangTimeout = null;
-inputUang.addEventListener("input", () => {
-  const formatted = formatRibuan(inputUang.value);
-  inputUang.value = formatted;
-  clearFieldError("uang");
+function getRawLiter() {
+  return inputLiter.value.replace(/[^0-9.]/g, "");
+}
 
+let terbilangTimeout = null;
+function scheduleTerbilangUpdate() {
   clearTimeout(terbilangTimeout);
   terbilangTimeout = setTimeout(async () => {
     const raw = getRawUang();
@@ -161,6 +182,67 @@ inputUang.addEventListener("input", () => {
       // Jika gagal, biarkan user mengisi manual
     }
   }, 400);
+}
+
+// Uang -> Liter, dibulatkan 2 desimal (format 12.23)
+function recalcLiterFromUang() {
+  const harga = getHarga();
+  const raw = getRawUang();
+  if (!harga || !raw) return;
+  const nominal = parseFloat(raw);
+  if (isNaN(nominal)) return;
+  const liter = Math.round((nominal / harga) * 100) / 100;
+  inputLiter.value = liter.toFixed(2);
+  clearFieldError("jumlah_liter");
+}
+
+// Liter -> Uang, dibulatkan ke Rupiah penuh (uang tidak berbentuk pecahan)
+function recalcUangFromLiter() {
+  const harga = getHarga();
+  const raw = getRawLiter();
+  if (!harga || !raw) return;
+  const liter = parseFloat(raw);
+  if (isNaN(liter)) return;
+  const uang = Math.round(liter * harga);
+  inputUang.value = formatRibuan(String(uang));
+  clearFieldError("uang");
+  scheduleTerbilangUpdate();
+}
+
+// Dipanggil saat jenis BBM berubah (manual maupun autofill nomor polisi):
+// hitung ulang field yang belum jadi sumber input terakhir.
+function recalcFromPriceChange() {
+  if (getRawUang()) {
+    recalcLiterFromUang();
+  } else if (getRawLiter()) {
+    recalcUangFromLiter();
+  }
+}
+
+// Hanya izinkan angka & satu titik desimal pada Jumlah Liter
+inputLiter.addEventListener("input", () => {
+  let val = inputLiter.value.replace(/[^0-9.]/g, "");
+  const parts = val.split(".");
+  if (parts.length > 2) {
+    val = parts[0] + "." + parts.slice(1).join("");
+  }
+  inputLiter.value = val;
+  clearFieldError("jumlah_liter");
+  recalcUangFromLiter();
+});
+
+// Format ribuan otomatis untuk Uang Sebanyak + generate liter & terbilang otomatis
+inputUang.addEventListener("input", () => {
+  const formatted = formatRibuan(inputUang.value);
+  inputUang.value = formatted;
+  clearFieldError("uang");
+  recalcLiterFromUang();
+  scheduleTerbilangUpdate();
+});
+
+selectJenisBbm.addEventListener("change", () => {
+  clearFieldError("jenis_bbm");
+  recalcFromPriceChange();
 });
 
 // ---------------------------------------------------------

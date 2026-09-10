@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ app_name }} - Pengaturan</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-kejati.png') }}" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='img/logo-kejati.png') }}" alt="Logo Kejaksaan Tinggi Jawa Tengah" />
+      <div class="brand-text">
+        <div class="app-title">{{ app_name }}</div>
+        <div class="app-subtitle">Kejaksaan Tinggi Jawa Tengah</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="datetime-box">
+        <div id="tanggal-header">--</div>
+        <div class="jam" id="jam-header">--:--:--</div>
+      </div>
+      <button class="btn-logout" onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+    </div>
+  </header>
+
+  <nav class="nav-menu">
+    <a href="{{ url_for('dashboard') }}">Bon BBM</a>
+    <a href="{{ url_for('settings') }}" class="active">Pengaturan</a>
+    <a href="{{ url_for('dashboard') }}">Menu Dalam Pengembangan</a>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-heading">
+      <h1>Pengaturan Data</h1>
+      <p>Kelola harga BBM, data kendaraan, dan daftar driver yang dipakai untuk autofill pada Form Bon BBM.</p>
+    </div>
+
+    <!-- ============ Harga BBM ============ -->
+    <div class="card settings-card">
+      <h2 class="settings-card-title">Harga BBM</h2>
+      <p class="settings-card-desc">
+        Harga per liter dipakai untuk menghitung otomatis Jumlah Liter dan Uang Sebanyak pada Form Bon BBM.
+      </p>
+      <div class="table-wrap">
+        <table class="data-table" id="table-bbm-prices">
+          <thead>
+            <tr>
+              <th>Jenis BBM</th>
+              <th>Harga / Liter (Rp)</th>
+              <th class="col-aksi">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-bbm-prices">
+            {% for p in bbm_prices %}
+            <tr data-id="{{ p.id }}">
+              <td>{{ p.jenis_bbm }}</td>
+              <td>
+                <div class="input-icon-group">
+                  <span class="input-prefix">Rp</span>
+                  <input type="text" class="input-harga has-prefix" inputmode="numeric" value="{{ '%d' % p.harga }}" />
+                </div>
+              </td>
+              <td class="col-aksi">
+                <button type="button" class="btn-icon btn-save" data-action="save-price">Simpan</button>
+                <button type="button" class="btn-icon btn-danger" data-action="delete-price">Hapus</button>
+              </td>
+            </tr>
+            {% endfor %}
+            {% if not bbm_prices %}
+            <tr class="row-empty"><td colspan="3">Belum ada data jenis BBM.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <form class="inline-add-form" id="form-add-price">
+        <input type="text" id="new-jenis-bbm" placeholder="Nama jenis BBM baru (mis. Pertalite)" required />
+        <input type="text" id="new-harga-bbm" inputmode="numeric" placeholder="Harga per liter" required />
+        <button type="submit" class="btn-add">+ Tambah Jenis BBM</button>
+      </form>
+    </div>
+
+    <!-- ============ Kendaraan & Driver ============ -->
+    <div class="card settings-card">
+      <h2 class="settings-card-title">Data Kendaraan &amp; Driver</h2>
+      <p class="settings-card-desc">
+        Atur driver dan jenis BBM untuk masing-masing kendaraan. Data ini dipakai untuk autofill saat
+        Nomor Polisi dipilih pada Form Bon BBM.
+      </p>
+      <div class="table-wrap">
+        <table class="data-table" id="table-vehicles">
+          <thead>
+            <tr>
+              <th>Nomor Polisi</th>
+              <th>Driver</th>
+              <th>Jenis BBM</th>
+              <th class="col-aksi">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-vehicles">
+            {% for v in vehicles %}
+            <tr data-id="{{ v.id }}">
+              <td><input type="text" class="input-nopol" value="{{ v.nomor_polisi }}" /></td>
+              <td>
+                <select class="input-driver">
+                  <option value="" {% if not v.driver %}selected{% endif %}>- Pilih Driver -</option>
+                  {% for d in drivers %}
+                  <option value="{{ d.nama }}" {% if v.driver == d.nama %}selected{% endif %}>{{ d.nama }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td>
+                <select class="input-jenis-bbm">
+                  <option value="" {% if not v.jenis_bbm %}selected{% endif %}>- Pilih Jenis BBM -</option>
+                  {% for p in bbm_prices %}
+                  <option value="{{ p.jenis_bbm }}" {% if v.jenis_bbm == p.jenis_bbm %}selected{% endif %}>{{ p.jenis_bbm }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td class="col-aksi">
+                <button type="button" class="btn-icon btn-save" data-action="save-vehicle">Simpan</button>
+                <button type="button" class="btn-icon btn-danger" data-action="delete-vehicle">Hapus</button>
+              </td>
+            </tr>
+            {% endfor %}
+            {% if not vehicles %}
+            <tr class="row-empty"><td colspan="4">Belum ada data kendaraan.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <form class="inline-add-form form-add-vehicle" id="form-add-vehicle">
+        <input type="text" id="new-nopol" placeholder="Nomor polisi baru" required />
+        <select id="new-vehicle-driver">
+          <option value="">- Pilih Driver -</option>
+          {% for d in drivers %}
+          <option value="{{ d.nama }}">{{ d.nama }}</option>
+          {% endfor %}
+        </select>
+        <select id="new-vehicle-jenis-bbm">
+          <option value="">- Pilih Jenis BBM -</option>
+          {% for p in bbm_prices %}
+          <option value="{{ p.jenis_bbm }}">{{ p.jenis_bbm }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn-add">+ Tambah Kendaraan</button>
+      </form>
+    </div>
+
+    <!-- ============ Driver ============ -->
+    <div class="card settings-card">
+      <h2 class="settings-card-title">Driver</h2>
+      <p class="settings-card-desc">Tambah atau hapus nama driver yang tersedia untuk dipilih di Form Bon BBM.</p>
+      <div class="chip-list" id="chip-list-drivers">
+        {% for d in drivers %}
+        <span class="chip" data-id="{{ d.id }}">
+          {{ d.nama }}
+          <button type="button" class="chip-remove" data-action="delete-driver" title="Hapus driver">&times;</button>
+        </span>
+        {% endfor %}
+        {% if not drivers %}
+        <span class="chip-empty">Belum ada data driver.</span>
+        {% endif %}
+      </div>
+      <form class="inline-add-form" id="form-add-driver">
+        <input type="text" id="new-driver-nama" placeholder="Nama driver baru" required />
+        <button type="submit" class="btn-add">+ Tambah Driver</button>
+      </form>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+
+  <script src="{{ url_for('static', filename='js/clock.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+</body>
+</html>
