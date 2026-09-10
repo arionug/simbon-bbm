@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - {{ app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-kejati.png') }}" />
+</head>
+<body>
+  <div class="login-page" style="background-image: url('{{ url_for('static', filename='img/gedung-kejati.jpg') }}');">
+    <div class="bg-overlay"></div>
+
+    <header class="app-header">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='img/logo-kejati.png') }}" alt="Logo Kejaksaan Tinggi Jawa Tengah" />
+        <div class="brand-text">
+          <div class="app-title">{{ app_name }}</div>
+          <div class="app-subtitle">Kejaksaan Tinggi Jawa Tengah</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="datetime-box">
+          <div id="tanggal-header">--</div>
+          <div class="jam" id="jam-header">--:--:--</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="login-container">
+      <div class="login-card">
+        <h2>Selamat Datang</h2>
+        <p class="login-sub">Silakan masuk untuk mengakses {{ app_name }}</p>
+
+        {% if error %}
+        <div class="alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}" autocomplete="off">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Masukkan username" required autofocus />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Masukkan password" required />
+          </div>
+          <button type="submit" class="btn-primary">Login</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="login-footer">
+      &copy; <span id="tahun-footer"></span> Yohanes Vianney Ario Nugroho &mdash; {{ app_name }}
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/clock.js') }}"></script>
+  <script>
+    document.getElementById("tahun-footer").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

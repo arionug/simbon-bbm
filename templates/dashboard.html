@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ app_name }} - Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-kejati.png') }}" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='img/logo-kejati.png') }}" alt="Logo Kejaksaan Tinggi Jawa Tengah" />
+      <div class="brand-text">
+        <div class="app-title">{{ app_name }}</div>
+        <div class="app-subtitle">Kejaksaan Tinggi Jawa Tengah</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="datetime-box">
+        <div id="tanggal-header">--</div>
+        <div class="jam" id="jam-header">--:--:--</div>
+      </div>
+      <button class="btn-logout" onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+    </div>
+  </header>
+
+  <nav class="nav-menu">
+    <a href="{{ url_for('dashboard') }}" class="active">Bon BBM</a>
+    <a href="{{ url_for('dashboard') }}">Menu Dalam Pengembangan</a>
+    <a href="{{ url_for('dashboard') }}">Menu Dalam Pengembangan</a>
+  </nav>
+
+  <main class="main-content">
+    <div class="page-heading">
+      <h1>Form Nota Bon BBM</h1>
+      <p>Lengkapi seluruh data di bawah untuk membuat Nota Bon BBM secara otomatis.</p>
+    </div>
+
+    <div class="card">
+      <form id="form-bon-bbm" autocomplete="off" novalidate>
+        <div class="form-grid">
+
+          <!-- Tanggal Nota -->
+          <div class="form-group" data-field="tanggal_nota">
+            <label for="tanggal_nota">Tanggal Nota</label>
+            <input type="date" id="tanggal_nota" name="tanggal_nota" required />
+            <div class="field-error">Tanggal nota wajib diisi.</div>
+          </div>
+
+          <!-- Nomor Polisi (searchable dropdown) -->
+          <div class="form-group" data-field="nomor_polisi">
+            <label for="nomor_polisi_input">Nomor Polisi</label>
+            <div class="searchable-select" id="searchable-plat">
+              <input type="text" id="nomor_polisi_input" placeholder="Ketik atau pilih nomor polisi..." autocomplete="off" />
+              <input type="hidden" id="nomor_polisi" name="nomor_polisi" />
+              <div class="options-list" id="plat-options"></div>
+            </div>
+            <div class="field-error">Nomor polisi wajib dipilih.</div>
+          </div>
+
+          <!-- Jenis Bahan Bakar -->
+          <div class="form-group" data-field="jenis_bbm">
+            <label for="jenis_bbm">Jenis Bahan Bakar</label>
+            <select id="jenis_bbm" name="jenis_bbm" required>
+              <option value="" disabled selected>Pilih jenis BBM</option>
+              {% for jenis in jenis_bbm_list %}
+              <option value="{{ jenis }}">{{ jenis }}</option>
+              {% endfor %}
+            </select>
+            <div class="field-error">Jenis bahan bakar wajib dipilih.</div>
+          </div>
+
+          <!-- Jumlah Liter -->
+          <div class="form-group" data-field="jumlah_liter">
+            <label for="jumlah_liter">Jumlah Liter</label>
+            <div class="input-icon-group">
+              <input type="text" inputmode="decimal" id="jumlah_liter" name="jumlah_liter" placeholder="0" class="has-suffix" required />
+              <span class="input-suffix">Liter</span>
+            </div>
+            <div class="field-error">Jumlah liter wajib diisi dengan angka.</div>
+          </div>
+
+          <!-- Uang Sebanyak -->
+          <div class="form-group" data-field="uang">
+            <label for="uang">Uang Sebanyak</label>
+            <div class="input-icon-group">
+              <span class="input-prefix">Rp</span>
+              <input type="text" inputmode="numeric" id="uang" name="uang" placeholder="0" class="has-prefix" required />
+            </div>
+            <div class="field-error">Uang sebanyak wajib diisi dengan angka.</div>
+          </div>
+
+          <!-- Mengetahui -->
+          <div class="form-group" data-field="mengetahui">
+            <label for="mengetahui">Mengetahui</label>
+            <select id="mengetahui" name="mengetahui" required>
+              <option value="" disabled selected>Pilih Driver</option>
+              {% for pejabat in mengetahui_list %}
+              <option value="{{ pejabat }}">{{ pejabat }}</option>
+              {% endfor %}
+            </select>
+            <div class="field-error">Kolom mengetahui wajib dipilih.</div>
+          </div>
+
+          <!-- Terbilang (full width) -->
+          <div class="form-group full-width" data-field="terbilang">
+            <label for="terbilang">Terbilang</label>
+            <input type="text" id="terbilang" name="terbilang" placeholder="Contoh: Dua Ratus Lima Puluh Ribu Rupiah" required />
+            <div class="field-error">Terbilang wajib diisi.</div>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-reset" id="btn-reset">Reset Form</button>
+          <button type="submit" class="btn-generate" id="btn-generate">
+            <span id="btn-generate-text">Generate Nota BBM</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div id="toast-container"></div>
+
+  <script>
+    window.VEHICLES_DATA = {{ vehicles | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='js/clock.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

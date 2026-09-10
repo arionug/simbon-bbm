@@ -1,0 +1,457 @@
+/* =========================================================
+   SIMBON BBM - Kejaksaan Tinggi Jawa Tengah
+   Stylesheet utama
+========================================================= */
+:root {
+  --biru-tua: #0f2d5a;
+  --biru-tua-gelap: #0a2044;
+  --emas: #d4af37;
+  --emas-terang: #e8c766;
+  --abu-terang: #f4f6f9;
+  --abu-border: #dfe4ea;
+  --teks-utama: #1f2937;
+  --teks-muted: #6b7280;
+  --merah: #dc2626;
+  --hijau: #16a34a;
+  --radius: 10px;
+  --shadow: 0 8px 24px rgba(15, 45, 90, 0.12);
+  --shadow-sm: 0 2px 8px rgba(15, 45, 90, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--teks-utama);
+  background: var(--abu-terang);
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ---------------- Header umum ---------------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--biru-tua) 0%, var(--biru-tua-gelap) 100%);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 10;
+}
+
+.app-header .brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.app-header .brand img {
+  height: 46px;
+  width: 46px;
+  object-fit: contain;
+}
+
+.app-header .brand .brand-text .app-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--emas-terang);
+  line-height: 1.2;
+}
+
+.app-header .brand .brand-text .app-subtitle {
+  font-size: 11.5px;
+  color: #d7deec;
+  line-height: 1.2;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.datetime-box {
+  text-align: right;
+  font-size: 12.5px;
+  color: #e6ebf5;
+  line-height: 1.35;
+}
+
+.datetime-box .jam {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--emas-terang);
+  letter-spacing: 0.5px;
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+.btn-logout:hover { background: rgba(255, 255, 255, 0.22); }
+
+/* ---------------- Halaman Login ---------------- */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.login-page .bg-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(10, 20, 40, 0.82), rgba(15, 45, 90, 0.75));
+  z-index: 0;
+}
+
+.login-page .app-header {
+  background: transparent;
+  box-shadow: none;
+  position: relative;
+  z-index: 2;
+}
+
+.login-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  padding: 30px 16px;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 16px;
+  padding: 40px 38px 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  border-top: 4px solid var(--emas);
+}
+
+.login-card h2 {
+  text-align: center;
+  margin: 0 0 4px;
+  color: var(--biru-tua);
+  font-size: 21px;
+}
+
+.login-card .login-sub {
+  text-align: center;
+  color: var(--teks-muted);
+  font-size: 13px;
+  margin-bottom: 26px;
+}
+
+.form-group { margin-bottom: 18px; }
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--teks-utama);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1.5px solid var(--abu-border);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--biru-tua);
+  box-shadow: 0 0 0 3px rgba(15, 45, 90, 0.12);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--biru-tua), var(--biru-tua-gelap));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-primary:hover { box-shadow: 0 6px 16px rgba(15, 45, 90, 0.35); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.alert-error {
+  background: #fdecea;
+  color: var(--merah);
+  border: 1px solid #f7c6c1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.login-footer {
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.75);
+  padding: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------------- Navigasi Dashboard ---------------- */
+.nav-menu {
+  display: flex;
+  gap: 6px;
+  background: #fff;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--abu-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-menu a {
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--teks-muted);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-menu a.active {
+  color: var(--biru-tua);
+  border-bottom-color: var(--emas);
+}
+
+.nav-menu a:hover:not(.active) { color: var(--biru-tua); }
+
+/* ---------------- Konten Dashboard ---------------- */
+.main-content {
+  max-width: 980px;
+  margin: 28px auto;
+  padding: 0 20px 60px;
+}
+
+.page-heading {
+  margin-bottom: 20px;
+}
+
+.page-heading h1 {
+  font-size: 21px;
+  color: var(--biru-tua);
+  margin: 0 0 4px;
+}
+
+.page-heading p {
+  color: var(--teks-muted);
+  font-size: 13.5px;
+  margin: 0;
+}
+
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 30px;
+  border-top: 3px solid var(--emas);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 24px;
+}
+
+.form-grid .full-width { grid-column: 1 / -1; }
+
+.input-icon-group { position: relative; }
+
+.input-prefix {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--teks-muted);
+  font-weight: 600;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.input-suffix {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--teks-muted);
+  font-weight: 600;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.has-prefix { padding-left: 34px !important; }
+.has-suffix { padding-right: 46px !important; }
+
+.field-error {
+  color: var(--merah);
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+
+.form-group.invalid input,
+.form-group.invalid select {
+  border-color: var(--merah);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
+.form-group.invalid .field-error { display: block; }
+
+/* Searchable dropdown sederhana */
+.searchable-select { position: relative; }
+.searchable-select input[type="text"] {
+  cursor: pointer;
+}
+.searchable-select .options-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--abu-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  z-index: 30;
+  display: none;
+}
+.searchable-select .options-list.open { display: block; }
+.searchable-select .option-item {
+  padding: 10px 14px;
+  font-size: 13.5px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f3f6;
+}
+.searchable-select .option-item:last-child { border-bottom: none; }
+.searchable-select .option-item:hover { background: var(--abu-terang); }
+.searchable-select .option-item.add-new {
+  color: var(--biru-tua);
+  font-weight: 600;
+}
+.searchable-select .no-result {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--teks-muted);
+}
+
+.form-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-generate {
+  padding: 13px 30px;
+  background: linear-gradient(135deg, var(--biru-tua), var(--biru-tua-gelap));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-generate:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(15, 45, 90, 0.3); }
+.btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn-reset {
+  padding: 13px 22px;
+  background: #fff;
+  color: var(--teks-muted);
+  border: 1.5px solid var(--abu-border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-reset:hover { border-color: var(--biru-tua); color: var(--biru-tua); }
+
+/* ---------------- Toast Notifikasi ---------------- */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  min-width: 280px;
+  max-width: 360px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+.toast.success { background: linear-gradient(135deg, #16a34a, #15803d); }
+.toast.error { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+.toast.info { background: linear-gradient(135deg, #0f2d5a, #0a2044); }
+
+.toast.hide { animation: slideOut 0.3s ease forwards; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(40px); }
+}
+
+/* ---------------- Responsif ---------------- */
+@media (max-width: 720px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .app-header { padding: 10px 14px; }
+  .app-header .brand img { height: 36px; width: 36px; }
+  .datetime-box { display: none; }
+  .main-content { padding: 0 12px 40px; }
+  .card { padding: 20px; }
+  .nav-menu { padding: 0 10px; overflow-x: auto; }
+}
